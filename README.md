@@ -1,11 +1,13 @@
-#TwoBodyDecay
+#DecaySim
 ----------------------------------
 
-TwoBodyDecay provides classes and methods for simulating a relativistic particle undergoing a two body decay.
+DecaySim provides classes and methods for simulating a relativistic particle undergoing a two body decay.
 
 ##Dependencies
 
-TwoBodyDecay is compatible with python >= 2.7. It requires pyROOT bindings for CERN's ROOT to use the histplot submodule.
+DecaySim is compatible with python >= 2.7 including 3.x. 
+It requires pyROOT bindings for CERN's ROOT to use the histplot submodule.
+The massPDG() function in the distributions submodule relies on pypdt, which is available on pypi.
 
 ##Submodules
 
