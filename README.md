@@ -20,4 +20,4 @@ The **utils** module provides functions for calculating observables.
   * Clean up the code, particularly in particle.py
   * Create a plotting submodule based on matplotlib or pyglet.
   * Run comparison tests against other MC generators
-  * Write \__init__.py and setup.py scripts
+  * Write \_\_init\_\_.py and setup.py scripts.
