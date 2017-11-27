@@ -11,14 +11,12 @@ class particle(object):
     """Base class for particle objects."""
 
 
-    def __init__(self, m, pt, pz=0, phi=-1, isFinalState=False, epsilon=1e-5):
+    def __init__(self, m, pt, pz=0, phi=-4, isFinalState=False, epsilon=1e-5):
 
         self.m = m
         self.pT = pt
         self.pZ = pz
-        if( phi < 0 ):
-            phi = 2 * _pi * _random()
-        self.phi = phi
+        self.phi = _pi * (2 * _random() - 1)
         self.pX = self.pT * _cos(self.phi)
         self.pY = self.pT * _sin(self.phi)
         self.p = _sqrt(self.pT**2 + self.pZ**2)
@@ -54,19 +52,13 @@ class mother(particle):
         self.p1_rest = _sqrt(e1_rest**2 - m1**2)
         self.p2_rest = -self.p1_rest
 
-        self.phi1 = _random() * 2 * _pi
-        self.phi2 = self.phi1 - _pi
-        if( self.phi2 < 0 ):
-            self.phi2 += 2 * _pi
-
-        self.theta1 = random() * 2 * _pi
-        self.theta2 = self.theta1 - _pi
-        if( self.theta2 < 0 ):
-            self.theta2 += 2 * _pi
-
-        self._pX1_rest = self.p1_rest * _sin(self.theta1) * _cos(self.phi1)
-        self._pY1_rest = self.p1_rest * _sin(self.theta1) * _sin(self.phi1)
-        self._pZ1_rest = self.p1_rest * _cos(self.theta1)
+        self._phi = _pi * (2 * _random() - 1)
+                
+        self._theta = _pi * (2 * _random() - 1)
+                
+        self._pX1_rest = self.p1_rest * _sin(self._theta) * _cos(self._phi)
+        self._pY1_rest = self.p1_rest * _sin(self._theta) * _sin(self._phi)
+        self._pZ1_rest = self.p1_rest * _cos(self._theta)
         self._pX2_rest = -self._pX1_rest
         self._pY2_rest = -self._pY1_rest
         self._pZ2_rest = -self._pZ1_rest
@@ -142,17 +134,14 @@ class mother(particle):
         """Calculate daughter observables."""
 
         self.phi1 = _atan2(self.pY1, self.pX1)
-        if( self.phi1 <= 0 ):
-            self.phi1 += 2 * _pi
         self.phi2 = _atan2(self.pY2, self.pX2)
-        if( self.phi2 <= 0 ):
-            self.phi2 += 2 * _pi
-        self.dPhi = abs(self.phi1 - self.phi2)
-        if( self.dPhi > pi ):
-            self.dPhi = 2 * _pi - self.dPhi
-
-        self.pT1 = sqrt(self.pX1**2 + self.pY1**2)
-        self.pT2 = sqrt(self.pX2**2 + self.pY2**2)
+        self.dPhi = self.phi1 - self.phi2
+        if( self.dPhi >= _pi ):
+            self.dPhi -= 2 * _pi
+        if( self.dPhi <= -_pi ):
+            self.dPhi += 2 * _pi
+        self.pT1 = _sqrt(self.pX1**2 + self.pY1**2)
+        self.pT2 = _sqrt(self.pX2**2 + self.pY2**2)
 
         try:
             self.eta1 = _atanh(self.pZ1 / self.p1)
@@ -191,7 +180,7 @@ class mother(particle):
 
 
     def MotherPTCuts(self, pT):
-        """Cut events that don't meet pT threshold.""" 
+        """Cut events that don't meet pT threshold."""
         if( self.pT < pT ):
             self._isGood = False
 
@@ -218,12 +207,12 @@ class mother(particle):
     def __str__(self):
         """Return a string in pseudo-LHE format."""
         string = '<evt>\npX\t pY\t pZ\t E\t M\n'
-        string += ('%7.4f %7.4f %7.4f %7.4f %7.4f\n' % 
+        string += ('%7.4f %7.4f %7.4f %7.4f %7.4f\n' %
                    (self.pX, self.pY, self.pZ, self.e, self.m))
         try:
-            string += ('%7.4f %7.4f %7.4f %7.4f %7.4f\n' % 
+            string += ('%7.4f %7.4f %7.4f %7.4f %7.4f\n' %
                        (self.pX1, self.pY1, self.pZ1, self.e1, self.mD1))
-            string += ('%7.4f %7.4f %7.4f %7.4f %7.4f\n' % 
+            string += ('%7.4f %7.4f %7.4f %7.4f %7.4f\n' %
                        (self.pX2, self.pY2, self.pZ2, self.e2, self.mD2))
         except AttributeError:
             pass

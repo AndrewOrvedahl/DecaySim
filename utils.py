@@ -34,13 +34,13 @@ def CosTheta(vec1, vec2):
         dot /= (_sqrt(vec1[0]**2 + vec1[1]**2 + vec1[2]**2) *
                 _sqrt(vec2[0]**2 + vec2[1]**2 + vec2[2]**2))
         
-     elif( len(vec1) == 4 ):
+    elif( len(vec1) == 4 ):
         dot = vec1[1]*vec2[1] + vec1[2]*vec2[2] + vec1[3]*vec2[3]
         dot /= (_sqrt(vec1[1]**2 + vec1[2]**2 + vec1[3]**2) *
                 _sqrt(vec2[1]**2 + vec2[2]**2 + vec2[3]**2))
-
-     else:
-         raise RuntimeError(
-             'Error calculating dot product. Check vector length')
-
-     return dot
+        
+    else:
+        raise RuntimeError(
+            'Error calculating dot product. Check vector length')
+    
+    return dot

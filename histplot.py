@@ -5,7 +5,7 @@ import sys
 import os
 
 
-class plotter(object):
+class Plotter(object):
     """Histogram plotter object"""
 
 
@@ -118,11 +118,19 @@ class plotter(object):
             for name,hist in self.plots1D.iteritems():
                 c = TCanvas()
                 hist.Draw('E')
+                c.SetLeftMargin(0.15)
+                c.SetBottomMargin(0.15)
+                hist.GetYaxis().SetTitleOffset(1.6)
+                hist.GetXaxis().SetTitleOffset(1.6)
                 exec('c.SaveAs("%s."+filetype, filetype)' %
                      (self.filepath+name))
             for name,hist in self.plots2D.iteritems():
                 c = TCanvas()
                 hist.Draw('LEGO2 E')
+                c.SetLeftMargin(0.15)
+                c.SetBottomMargin(0.15)
+                hist.GetYaxis().SetTitleOffset(1.6)
+                hist.GetXaxis().SetTitleOffset(1.6)
                 exec('c.SaveAs("%s."+filetype, filetype)' %
                      (self.filepath+name))
 
@@ -130,11 +138,19 @@ class plotter(object):
             for name,hist in self.plots1D.items():
                 c = TCanvas()
                 hist.Draw('E')
+                c.SetLeftMargin(0.15)
+                c.SetBottomMargin(0.15)
+                hist.GetYaxis().SetTitleOffset(1.6)
+                hist.GetXaxis().SetTitleOffset(1.6)
                 exec('c.SaveAs("%s."+filetype, filetype)' %
                      (self.filepath+name))
             for name,hist in self.plots2D.items():
                 c = TCanvas()
                 hist.Draw('LEGO2 E')
+                c.SetLeftMargin(0.15)
+                c.SetBottomMargin(0.15)
+                hist.GetYaxis().SetTitleOffset(1.6)
+                hist.GetXaxis().SetTitleOffset(1.6)
                 exec('c.SaveAs("%s."+filetype, filetype)' %
                      (self.filepath+name))
         return
