@@ -8,6 +8,9 @@ except ImportError:
     print('You will not be able to use the massPDG() function without' +
           'installing the pypdt module from pypi.')
     
+_seed()
+
+
 def uniform(minimum, maximum):
     """Identical to uniform found in random module."""
     return _uniform(minimum, maximum)
