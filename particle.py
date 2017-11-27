@@ -138,7 +138,7 @@ class mother(particle):
         self.dPhi = self.phi1 - self.phi2
         if( self.dPhi >= _pi ):
             self.dPhi -= 2 * _pi
-        if( self.dPhi <= -_pi ):
+        if( self.dPhi < -_pi ):
             self.dPhi += 2 * _pi
         self.pT1 = _sqrt(self.pX1**2 + self.pY1**2)
         self.pT2 = _sqrt(self.pX2**2 + self.pY2**2)
