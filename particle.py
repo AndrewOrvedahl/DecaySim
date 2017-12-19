@@ -14,10 +14,10 @@ class Particle(object):
 
         self.vec = VecFour()
         self.m = m
-        self.phi = _pi * (2 * _random() - 1)
+        phi = _pi * (2 * _random() - 1)
 
-        px = pt * _cos(self.phi)
-        py = pt * _sin(self.phi)
+        px = pt * _cos(phi)
+        py = pt * _sin(phi)
 
         #Initialize the four vector.
         self.vec.SetPx(px)
@@ -26,14 +26,27 @@ class Particle(object):
         self.vec.SetE(_sqrt(self.vec.P2() + m**2))
 
         self._isGood = True
-        self._veto = False
+        self.veto = False
         if (m == 0):
-            self._isFinalState = True
+            self.isFinalState = True
         else:
-            self._isFinalState = isFinalState
+            self.isFinalState = isFinalState
         self._epsilon = epsilon
         return
 
+
+    def PTCuts(self, cut):
+        if (self.vec.Pt() < cut):
+            self.veto = True
+        return
+
+    
+    def EtaCuts(self, cut):
+        if (abs(self.vec.Eta()) > cut):
+            self.veto
+        return
+
+    
 class Mother(Particle):
     """Particle class capable of decays."""
 
@@ -41,7 +54,7 @@ class Mother(Particle):
     def Decay(self, dM1=0, dM2=0, isFinalState1=True,
                        isFinalState2=False):
         """Decay into daughters in the CM frame."""
-        if (self._isFinalState):
+        if (self.isFinalState):
             return
         assert (dM1 + dM2 <= self.m), 'Daughter masses violate CoE!'
         phi = _pi * (2 * _random() - 1)
@@ -62,7 +75,6 @@ class Mother(Particle):
         v2 = VecFour(-px, -py, -pz, e2rest)
 
         boost = self.vec.BoostVector()
-        print(boost)
         v1.Boost(boost)
         v2.Boost(boost)
         
@@ -73,7 +85,7 @@ class Mother(Particle):
         return (KnownParticle(v1, dM1, isFinalState1, self._epsilon),
                 KnownParticle(v2, dM2, isFinalState2, self._epsilon))
         
-
+    
     
 
 class KnownParticle(Mother):
@@ -82,8 +94,8 @@ class KnownParticle(Mother):
         self.vec = vec
         self.m = m
         if(m == 0):
-            self._isFinalState = False
+            self.isFinalState = False
         else:    
-            self._isFinalState = isFinalState
+            self.isFinalState = isFinalState
         self._epsilon = epsilon
 
