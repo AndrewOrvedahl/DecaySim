@@ -1,5 +1,11 @@
+from __future__ import division, print_function
 from math import sqrt as _sqrt, atan2 as _atan2, log as _log, pi as _pi
 
+#Force compatibility with python 2 and 3.
+try:
+    xrange
+except NameError:
+    xrange = range
 
 class VecThree(object):
     """Simple three-vector implementation. Every method for retrieving or
@@ -12,7 +18,7 @@ class VecThree(object):
         return
 
     def P2(self):
-        """Return the squared momentum."""
+        """Return the squared magnitude of momentum."""
         return self._x**2 + self._y**2 + self._z**2
 
 
@@ -125,7 +131,7 @@ class VecThree(object):
     def Dot3(self, v):
         """Return the dot product of it's and another vector's 
         positions/momenta."""
-        return (self._x * v._x + self._y * v._y + self._z * v._z)
+        return (self.X() * v.X() + self.Y() * v.Y() + self.Z() * v.Z())
 
 
     def Unit3(self):
@@ -135,8 +141,84 @@ class VecThree(object):
                         self._y / mag,
                         self._z / mag)
 
+
+    def __add__(self, v):
+        """Return the vector sum."""
+        return VecThree(self.X() + v.X(), self.Y() + v.Y(), self.Z() + v.Z())
+
+
+    def __sub__(self, v):
+        """Return the vector difference."""
+        return VecThree(self.X() - v.X(), self.Y() - v.Y(), self.Z() - v.Z())
+
+
+    def __mul__(self, v):
+        """Multiply self by a scalar. This should not be used with a VecFour."""
+        return VecThree(self.X()*v, self.Y()*v, self.Z()*v)
+
+
+    def __truediv__(self, v):
+        """Divide self by a scalar. This should mot be used with a VecFour."""
+        return VecThree(self.X()/v, self.Y()/v, self.Z()/v)
+
+
+    def __eq__(self, v):
+        """Check equality of two vectors."""
+        if (self.X() == v.X() and
+            self.Y() == v.Y() and
+            self.Z() == v.Z()):
+            return True
+        return False
+
+
+    def __getitem__(self, key):
+        """Allows acces to values via indexing."""
+        if (key == 0 or key == 'x' or key == 'px'):
+            return self.X()
+        if (key == 1 or key == 'y' or key == 'py'):
+            return self.Y()
+        if (key == 2 or key == 'z' or key == 'pz'):
+            return self.Z()
+        else:
+            raise AttributeError
+
+
+    def __repr__(self):
+        return '(%.4f, %.4f, %.4f)' % (self.X(), self.Y(), self.Z())
+
+
+    def __str__(self):
+        """Represents vector as a string."""
+        return '(%.4f, %.4f, %.4f)' % (self.X(), self.Y(), self.Z())
+
     
-    
+    def __imul__(self, scalar):
+        """Return product of self and a scalar. This should not be used with
+        a VecFour."""
+        self.SetX(self.X() * scalar)
+        self.SetY(self.Y() * scalar)
+        self.SetZ(self.Z() * scalar)
+        return self
+
+
+    def __iadd__(self, v):
+        """Adds another vector to self."""
+        self.SetX(self.X() + v.X())
+        self.SetY(self.Y() + v.Y())
+        self.SetZ(self.Z() + v.Z())
+        
+
+    def __neg__(self):
+        """Flip sign of spcial/momentum components."""
+        self.SetX(self.X() * -1.)
+        self.SetY(self.Y() * -1.)
+        self.SetZ(self.Z() * -1.)
+
+
+    def Generator(self):
+        for i in xrange(3):
+            yield self[i]
+        
 class VecFour(VecThree):
     """Simple four-vector implementation. Every method for retrieving or
     setting a value is implemented for both momentum and position. The 
@@ -147,11 +229,6 @@ class VecFour(VecThree):
         return
 
 
-    def M2(self):
-        """Return E^2 - P^2."""
-        return self._t**2 - (self._x**2 + self._y**2 + self._z**2)
-
-
     def T(self):
         """Return the t-component."""
         return self._t
@@ -160,6 +237,11 @@ class VecFour(VecThree):
     def E(self):
         """Return the e-component."""
         return self._t
+
+
+    def M2(self):
+        """Return E^2 - P^2."""
+        return self.T()**2 - (self.X()**2 + self.Y()**2 + self.Z()**2)
     
 
     def SetT(self, t):
@@ -174,7 +256,7 @@ class VecFour(VecThree):
 
     def Dot4(self, v):
         """Return E1*E2 - P1*P2."""
-        return self._t * v._t - self.Dot3(v)
+        return self.T() * v.T() - self.Dot3(v)
 
 
     def Unit4(self):
@@ -186,3 +268,89 @@ class VecFour(VecThree):
                        self._t / mag)
 
     
+    def BoostVector(self):
+        """Return a three-vector conaining Beta-x, Beta-y, and Beta-z."""
+        bx = self._x / self._t
+        by = self._y / self._t
+        bz = self._z / self._t
+        return VecThree(bx, by, bz)
+
+
+    def Boost(v):
+        """Boost the vector to the rest-frame of some other vector. It accepts
+        a VecThree of the components of beta."""
+        bx = v.X()
+        by = v.Y()
+        bz = v.Z()
+        b2 = bx**2 + by**2 + bz**2
+        g = 1. / _sqrt(1. - b2)
+        bp = self.Dot3(v)
+
+        if (b2 > 0):
+            g2 = (g - 1.)/b2
+        else:
+            g2 = 0.
+
+        self.SetX(self.X() + g2*bp*bx + g*bx*self.T())
+        self.SetY(self.Y() + g2*bp*by + g*by*self.T())
+        self.SetZ(self.Z() + g2*bp*bz + g*bz*self.T())
+        self.SetT(self.T() + bp)
+        return
+
+
+    def __add__(self, v):
+        """Return the vector sum."""
+        return VecFour(self.X() + v.X(), self.Y() + v.Y(),
+                       self.Z() + v.Z(), self.T() + v.T())
+
+
+    def __sub__(self, v):
+        """Return the difference of the vectors' components."""
+        return VecThree(self.X() - v.X(), self.Y() - v.Y(), self.Z() - v.Z())
+
+
+    def __eq__(self, v):
+        """Check equality of two vectors."""
+        if (self.X() == v.X() and
+            self.Y() == v.Y() and
+            self.Z() == v.Z() and
+            self.T() == v.T()):
+            return True
+        return False
+
+
+    def __getitem__(self, key):
+        if (key == 0 or key == 'x' or key == 'px'):
+            return self.X()
+        if (key == 1 or key == 'y' or key == 'py'):
+            return self.Y()
+        if (key == 2 or key == 'z' or key == 'pz'):
+            return self.Z()
+        if (key == 3 or key == 't' or key == 'e'):
+            return self.T()
+        else:
+            raise AttributeError
+
+        
+    def __repr__(self):
+        return '(%.4f, %.4f, %.4f, %.4f)' % (self.X(), self.Y(),
+                                             self.Z(), self.T())
+
+
+    def __str__(self):
+        """Represents vector as a string."""
+        return '(%.4f, %.4f, %.4f, %.4f)' % (self.X(), self.Y(),
+                                       self.Z(), self.T())
+
+
+    def __iadd__(self, v):
+        """Adds another vector to self."""
+        self.SetX(self.X() + v.X())
+        self.SetY(self.Y() + v.Y())
+        self.SetZ(self.Z() + v.Z())
+        self.SetT(self.T() + v.T())
+
+
+    def Generator(self):
+        for i in xrange(4):
+            yield self[i]
