@@ -25,7 +25,7 @@ def randExp(lambd=250, minimum=50):
 def zMass(mZ=91.188, wZ=2.495):
     """Return a gaussian distribution. Default has a mean of 91.188 and a 
     width of 2.495."""
-    return _gauss(mZ, wZ / (2*_sqrt(2*_log(2))))
+    return _gauss(mZ, wZ * (2*_sqrt(2*_log(2))))
 
 
 def randMom(m):
