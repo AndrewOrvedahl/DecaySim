@@ -142,6 +142,11 @@ class VecThree(object):
                         self._z / mag)
 
 
+    def CosTheta(self, v):
+        """Return the cosine of the angle between two vectors."""
+        return self.Unit3().Dot3(v.Unit3())
+
+
     def __add__(self, v):
         """Return the vector sum."""
         return VecThree(self.X() + v.X(), self.Y() + v.Y(), self.Z() + v.Z())
@@ -276,7 +281,7 @@ class VecFour(VecThree):
         return VecThree(bx, by, bz)
 
 
-    def Boost(v):
+    def Boost(self, v):
         """Boost the vector to the rest-frame of some other vector. It accepts
         a VecThree of the components of beta."""
         bx = v.X()
@@ -294,7 +299,7 @@ class VecFour(VecThree):
         self.SetX(self.X() + g2*bp*bx + g*bx*self.T())
         self.SetY(self.Y() + g2*bp*by + g*by*self.T())
         self.SetZ(self.Z() + g2*bp*bz + g*bz*self.T())
-        self.SetT(self.T() + bp)
+        self.SetT(g*(self.T() + bp))
         return
 
 
