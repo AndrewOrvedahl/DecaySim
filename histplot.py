@@ -29,11 +29,11 @@ class Plotter(object):
         return
 
 
-    def SetPalette(self):
+    def SetPalette(self, optstat=1111111):
         """Sets default plot settings."""
         gROOT.Reset()
         gROOT.SetStyle('Plain')
-        gStyle.SetOptStat(1111111)
+        gStyle.SetOptStat(optstat)
         gStyle.SetPalette(1)
         gStyle.SetLineColor(4)
         return
