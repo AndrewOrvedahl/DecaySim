@@ -25,7 +25,7 @@ class Particle(object):
         self.vec.SetPz(pz)
         self.vec.SetE(_sqrt(self.vec.P2() + m**2))
 
-        self._isGood = True
+        self.isGood = True
         self.veto = False
         if (m == 0):
             self.isFinalState = True
@@ -36,14 +36,14 @@ class Particle(object):
 
 
     def PTCuts(self, cut):
-        if (self.vec.Pt() < cut):
+        if (self.vec.Pt() <= cut):
             self.veto = True
         return
 
     
     def EtaCuts(self, cut):
-        if (abs(self.vec.Eta()) > cut):
-            self.veto
+        if (abs(self.vec.Eta()) >= cut):
+            self.veto = True
         return
 
     
@@ -80,7 +80,7 @@ class Mother(Particle):
         
         if (v1.M2() - dM1**2 > self._epsilon or
             v2.M2() - dM2**2 > self._epsilon):
-            self._isGood = False
+            self.isGood = False
             
         return (KnownParticle(v1, dM1, isFinalState1, self._epsilon),
                 KnownParticle(v2, dM2, isFinalState2, self._epsilon))
@@ -98,4 +98,5 @@ class KnownParticle(Mother):
         else:    
             self.isFinalState = isFinalState
         self._epsilon = epsilon
+        self.veto = False
 
