@@ -51,12 +51,13 @@ class Mother(Particle):
     """Particle class capable of decays."""
 
 
-    def Decay(self, dM1=0, dM2=0, isFinalState1=True,
+    def Decay(self, dM1=0, dM2=0, isFinalState1=False,
                        isFinalState2=False):
         """Decay into daughters in the CM frame."""
-        if (self.isFinalState):
-            return
+        assert (not self.isFinalState), 'Can\'t decay final state particles!'
+        assert (self.m != 0), 'Can\'t decay massless particles!'
         assert (dM1 + dM2 <= self.m), 'Daughter masses violate CoE!'
+                #less than or equal prevent zero-division in rounding errors.
         phi = _pi * (2 * _random() - 1)
         theta = _pi * _random()
 
@@ -94,9 +95,10 @@ class KnownParticle(Mother):
         self.vec = vec
         self.m = m
         if(m == 0):
-            self.isFinalState = False
+            self.isFinalState = True
         else:    
             self.isFinalState = isFinalState
         self._epsilon = epsilon
         self.veto = False
-
+        self.isGood = True
+        
